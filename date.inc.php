@@ -3,23 +3,36 @@
     /**
      * convert
      * 
-     * Converts the passed in timestamp, required to be in UTC format, to the
-     * timezone specified as the second parameter.
+     * Converts the passed in timestamp, based on the system default timezone,
+     * to the timezone specified as the second parameter.
      * 
      * The number of seconds since the unix-epoch are returned. This allows for
      * straight-forward use in the <date> function.
      * 
+     * Just always be sure that you connect to the database, and that the
+     * <date.timezone> property, are set to the same timezone. Then this convert
+     * method should work wonderfully.
+     * 
      * @access public
      * @param  String $timestamp
-     * @param  String $to Timezone to convert to
+     * @param  String $to timezone that should be converted to
      * @return Integer
      */
     function convert($timestamp, $to)
     {
-        // timezone conversion
+        // system
+        $from = date_default_timezone_get();
+        $zone = (new DateTimeZone($from));
+        $time = (new DateTime($timestamp, $zone));
+        $system = $zone->getOffset($time);
+
+        // desired
         $zone = (new DateTimeZone($to));
         $time = (new DateTime($timestamp, $zone));
-        $offset = $zone->getOffset($time);
+        $local = $zone->getOffset($time);
+
+        // difference between timezones
+        $offset = $local - $system;
 
         // seconds
         $seconds = strtotime($timestamp);
