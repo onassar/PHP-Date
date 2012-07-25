@@ -3,7 +3,7 @@
     /**
      * convert
      * 
-     * Converts the passed in timestamp, assumed to be in UTC format, to the
+     * Converts the passed in timestamp, required to be in UTC format, to the
      * timezone specified as the second parameter.
      * 
      * The number of seconds since the unix-epoch are returned. This allows for
@@ -11,17 +11,17 @@
      * 
      * @access public
      * @param  String $timestamp
-     * @param  String $timezone
+     * @param  String $to Timezone to convert to
      * @return Integer
      */
-    function convert($timestamp, $timezone)
+    function convert($timestamp, $to)
     {
-        // instantiations
-        $dtz = (new DateTimeZone($timezone));
-        $dt = (new DateTime($timestamp, $dtz));
+        // timezone conversion
+        $zone = (new DateTimeZone($to));
+        $time = (new DateTime($timestamp, $zone));
+        $offset = $zone->getOffset($time);
 
-        // calculate offset compared to timezone
-        $offset = $dt->getOffset();
+        // seconds
         $seconds = strtotime($timestamp);
         $converted = $seconds + $offset;
         return $converted;
