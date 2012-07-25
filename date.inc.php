@@ -51,6 +51,8 @@
      *     Yesterday, 11am
      *     Aug 24, 12pm
      * 
+     * @note   the flow for this may seem wonky, but it's ordered in such a way
+     *         to prevent unnecessary time calculations and executions.
      * @access public
      * @param  String $timestamp
      * @param  String $timezone
