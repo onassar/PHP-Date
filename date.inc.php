@@ -71,22 +71,30 @@
          * 
          */
 
+        // temporarily set the timezone
+        $previous = date_default_timezone_get();
+        date_default_timezone_set($timezone);
+
         // today
-        $today = date('Y-m-d G:i:s', strtotime('today'));
-        $today = convert($today, $timezone);
+        $formatted = date('Y-m-d G:i:s', strtotime('today'));
+        $today = strtotime($formatted);
+
+        // tomorrow
+        $formatted = date('Y-m-d G:i:s', strtotime('tomorrow'));
+        $tomorrow = strtotime($formatted);
+
+        // yesterday
+        $formatted = date('Y-m-d G:i:s', strtotime('yesterday'));
+        $yesterday = strtotime($formatted);
+
+        // reset the timezone
+        date_default_timezone_set($previous);
 
         // if it's either today, or in the future
         if ($time > $today) {
 
-            // tomorrow
-            $tomorrow = date('Y-m-d G:i:s', strtotime('tomorrow'));
-            $tomorrow = convert($tomorrow, $timezone);
-
             // if it's today
-            if (
-                $time < $tomorrow
-                && $time > $today
-            ) {
+            if ($time < $tomorrow) {
                 $date = 'Today';
             }
             // otherwise, in the future
@@ -115,13 +123,6 @@
         // otherwise, must be in the past
         else {
 
-            // mark that time should *not* be included
-            $include = false;
-
-            // yesterday
-            $yesterday = date('Y-m-d G:i:s', strtotime('yesterday'));
-            $yesterday = convert($yesterday, $timezone);
-
             // if it was yesterday
             if (
                 $time < $today
@@ -131,7 +132,10 @@
             }
             // otherwise, past yesterday
             else {
-                $date = date('M. jS', $time);
+
+                // mark that time should *not* be included; simple format
+                $include = false;
+                $date = date('M j', $time);
             }
         }
 
@@ -154,14 +158,11 @@
     
             // am/pm
             $append = date('a', $time);
-    
-            // put it all together
-            $response = ($date) . ', ' . ($hour) . ($minutes) . ($append);
-        }
-        else {
-            $response = $date;
+
+            // return it all glued together
+            return ($date) . ', ' . ($hour) . ($minutes) . ($append);
         }
 
-        // return the response
-        return $response;
+        // return, excluding the time
+        return $date;
     }
