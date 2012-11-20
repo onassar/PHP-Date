@@ -43,24 +43,29 @@
     /**
      * plain
      * 
-     * Converts the time passed in to plain english, minimalized.
+     * Converts the time passed-in to plain english, minimalized.
      * Examples:
      * 
      *     Tomorrow, 5pm
      *     Tuesday, 5:50pm
-     *     Aug 24, 12pm (future)
-     *     Yesterday
-     *     Jan 1 (past)
+     *     Yesterday, 11am
+     *     Aug 24, 12pm
      * 
      * @access public
-     * @param  String $timestamp
+     * @param  String $datetime
      * @param  String $timezone
      * @return String
      */
-    function plain($timestamp, $timezone, $options = array())
-    {
+    function plain(
+        $datetime,
+        $timezone,
+        $options = array(
+            'include' => false,
+            'timestamp' => false
+        )
+    ) {
         // empty timestamp check
-        if ($timestamp === '0000-00-00 00:00:00') {
+        if ($datetime === '0000-00-00 00:00:00') {
             return '(not sure)';
         }
 
@@ -68,7 +73,7 @@
         $include = true;
 
         // convert
-        $time = convert($timestamp, $timezone);
+        $time = strtotime($datetime);
 
         /**
          * Day
